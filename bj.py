@@ -79,14 +79,14 @@ class Chips:
         self.total -= self.bet
         pass        
 
-def take_bet():
+def take_bet(chips):
     while True:
         try:
-            playerBet = int(input("please enter your bet "))
+            chips.bet = int(input("please enter your bet "))
         except:
             print("Please enter only whole numbers")
         else:
-            if playerBet > mychip.total:
+            if chips.bet > chips.total:
                 print("you don't have enough chips. please enter a smaller amount")
             else:
                 break
@@ -121,26 +121,34 @@ def show_all(player,dealer):
     
     pass
 
-def player_busts(player):
+###Player lost####
+def player_busts(player,chips):
     if player.value > 21:
+        chips.lose_bet()
         print("Busted! you've lost. Dealer wins.")
         return True
     pass
 
-def player_wins(player,dealer):
+####Player Won###
+def player_wins(player,dealer,chips):
     if (dealer.value < player.value):
+        chips.win_bet()
         print("Yeah baby! Player won!")
         return True
     pass
 
-def dealer_busts(dealer):
+####Player Won###
+def dealer_busts(dealer,chips):
     if dealer.value > 21:
+        chips.win_bet()
         print("Yeah baby! Player won! Dealer Busted!")
         return True
     pass
-    
+
+###Player lost####    
 def dealer_wins(player,dealer):
     if dealer.value > player.value:
+        chips.lose_bet()
         print("You've lost! Dealer Won!")
         return True
     pass
@@ -172,7 +180,7 @@ while True:
     liran_chips = Chips()
     
     # Prompt the Player for their bet
-    player_bet = int(input("please enter your bet: "))
+    take_bet(liran_chips)
     
     # Show cards (but keep one dealer card hidden)\
     show_some(liran,mydealer)    
@@ -187,7 +195,7 @@ while True:
         show_some(liran,mydealer)
         
         # If player's hand exceeds 21, run player_busts() and break out of loop
-        if (player_busts(liran)):
+        if (player_busts(liran,liran_chips)):
             game = False
             break
         
@@ -203,11 +211,11 @@ while True:
     
         # Run different winning scenarios
     while game:
-        if player_wins(liran,mydealer):
+        if player_wins(liran,mydealer,liran_chips):
             game = False
-        elif dealer_busts(mydealer):
+        elif dealer_busts(mydealer,liran_chips):
             game = False
-        elif dealer_wins(liran,mydealer):
+        elif dealer_wins(liran,mydealer,liran_chips):
             game = False
         elif push(liran,mydealer):
             game = False
@@ -216,6 +224,7 @@ while True:
     # Inform Player of their chips total 
     
     # Ask to play again
+    print(f"Your chips total is: {liran_chips.total}")
     again = input("do you want to play again? ").lower()
     if again == 'yes':
         playing = True
