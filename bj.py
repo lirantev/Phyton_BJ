@@ -5,6 +5,7 @@ suits = ('Hearts',' Diamonds', 'Spades', 'Clubs')
 ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
 values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
 playing = True
+amount = 100
 
 class Card:
     def __init__(self,suit,rank):
@@ -67,7 +68,7 @@ class Hand:
 
 class Chips:
     
-    def __init__(self,total=100):
+    def __init__(self,total):
         self.total = total  # This can be set to a default value or supplied by a user input
         self.bet = 0
         
@@ -93,10 +94,10 @@ def take_bet(chips):
     pass
 
 def hit(deck,hand):
-    if hand.value < 21:
-        newCard = hand.add_card(deck.deal())
+        hand.add_card(deck.deal())
+        hand.adjust_for_ace()
+
     #Need to add Aces check
-    pass
 
 def hit_or_stand(deck,hand):
     global playing  # to control an upcoming while loop
@@ -105,14 +106,13 @@ def hit_or_stand(deck,hand):
         hit(deck,hand)
     else:
         playing = False
-    
-    pass
 
 def show_some(player,dealer):
     print("player hand is: " + str(player))
-    dealer_string = str(dealer)
-    dealer_split = dealer_string.split(',')
-    print("dealer hand is: " + str(dealer_split[1:]))
+    #dealer_string = str(dealer)
+    #dealer_split = dealer_string.split(',')
+    #print("dealer hand is: " + str(dealer_split[1:]))
+    print("dealer hand is: " + str(dealer.cards[1]))
     pass
     
 def show_all(player,dealer):
@@ -146,7 +146,7 @@ def dealer_busts(dealer,chips):
     pass
 
 ###Player lost####    
-def dealer_wins(player,dealer):
+def dealer_wins(player,dealer,chips):
     if dealer.value > player.value:
         chips.lose_bet()
         print("You've lost! Dealer Won!")
@@ -177,7 +177,7 @@ while True:
     mydealer.add_card(mydeck.deal())
      
     # Set up the Player's chips
-    liran_chips = Chips()
+    liran_chips = Chips(amount)
     
     # Prompt the Player for their bet
     take_bet(liran_chips)
@@ -222,11 +222,13 @@ while True:
         
     
     # Inform Player of their chips total 
+    print(f"Your chips total is: {liran_chips.total}")
     
     # Ask to play again
-    print(f"Your chips total is: {liran_chips.total}")
+
     again = input("do you want to play again? ").lower()
     if again == 'yes':
+        amount = liran_chips.total
         playing = True
     else:
         break        
